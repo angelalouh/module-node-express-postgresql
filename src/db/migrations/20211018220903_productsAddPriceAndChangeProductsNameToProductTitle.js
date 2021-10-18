@@ -1,6 +1,6 @@
 exports.up = function (knex) {
   return knex.schema.table("products", (table) => {
-    table.renameColumn("products_name", "product_title");
+    table.renameColumn("product_name", "product_title");
     table.decimal("product_price"); // Adding a new column
   });
 };
