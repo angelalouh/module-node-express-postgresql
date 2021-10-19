@@ -36,5 +36,5 @@ module.exports = {
     create,
     read,
     update,
-    destroy,
+    delete: destroy,
 };
