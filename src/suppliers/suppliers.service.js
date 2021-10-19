@@ -11,6 +11,23 @@ function create(supplier) {
         .then((createdRecords) => createdRecords[0]);
 }
 
+function read(supplier_id) {
+    return knex("suppliers").select("*").where({ supplier_id }).first();
+}
+
+function update(updatedSupplier) {
+    return knex("suppliers")
+        .select("*")
+        .where({ supplier_id: updatedSupplier.supplier_id })
+        // update() accepts an obj containing the data for updating the existing supplier and it is also passed a second argument
+        // If a returning array is passed as the second argument, it resolves the promise with an array of all the updated rows with specified columns
+        // You can also pass "*" as the second arg to return all of the columns of the updated rows
+        .update(updatedSupplier, "*")
+        .then((updatedRecords) => updatedRecords[0]);
+}
+
 module.exports = {
     create,
+    read,
+    update,
 };
