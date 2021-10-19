@@ -34,6 +34,23 @@ function hasOnlyValidProperties(req, res, next) {
 const hasProperties = require("../errors/hasProperties");
 const hasRequiredProperties = hasProperties("supplier_name", "supplier_email");
 
+// Validation middleware:
+function supplierExists(req, res, next) {
+  suppliersService
+    .read(req.params.supplierId)
+    // Chaining then() to suppliersService.read() will execute the Knex query
+    .then((supplier) => {
+      // If the supplier exists, it is stored in res.locals.supplier
+      if (supplier) {
+        res.locals.supplier = supplier;
+        return next();
+      }
+      // If supplier doesn't exist, next() is called with an error obj
+      next({ status: 404, message: `Supplier cannot be found.` });
+    })
+    .catch(next);
+}
+
 function create(req, res, next) {
   suppliersService
     // The req.body.data argument references the obj containing the supplier information
@@ -44,8 +61,17 @@ function create(req, res, next) {
     .catch(next);
 }
 
-async function update(req, res, next) {
-  res.json({ data: { supplier_name: "updated supplier" } });
+function update(req, res, next) {
+  const updatedSupplier = {
+    ...req.body.data,
+    /* supplier_id is set to existing supplier_id via res.locals.supplier to prevent the update 
+    from accidentally, or intentionally, changing the supplier_id during an update */
+    supplier_id: res.locals.supplier.supplier_id,
+  };
+  suppliersService
+    .update(updatedSupplier)
+    .then((data) => res.json({ data }))
+    .catch(next);
 }
 
 async function destroy(req, res, next) {
@@ -54,6 +80,6 @@ async function destroy(req, res, next) {
 
 module.exports = {
   create: [hasOnlyValidProperties, hasRequiredProperties, create],
-  update: [hasOnlyValidProperties, hasRequiredProperties, update],
+  update: [supplierExists, hasOnlyValidProperties, hasRequiredProperties, update],
   delete: destroy,
 };
