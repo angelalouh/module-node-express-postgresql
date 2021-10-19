@@ -26,8 +26,15 @@ function update(updatedSupplier) {
         .then((updatedRecords) => updatedRecords[0]);
 }
 
+// Deleting a supplier based on ID
+function destroy(supplier_id) {
+    // Unlike update() and insert(), del() does not accept any arguments
+    return knex("suppliers").where({ supplier_id }).del();
+}
+
 module.exports = {
     create,
     read,
     update,
+    destroy,
 };
