@@ -35,6 +35,16 @@ const hasProperties = require("../errors/hasProperties");
 const hasRequiredProperties = hasProperties("supplier_name", "supplier_email");
 
 // Validation middleware:
+async function supplierExists(req, res, next) {
+  const supplier = await suppliersService.read(req.params.supplierId);
+  if (supplier) {
+    res.locals.supplier = supplier;
+    return next();
+  }
+  next({ status: 404, message: `Supplier cannot be found.` });
+}
+
+/* Code using then() and catch()
 function supplierExists(req, res, next) {
   suppliersService
     .read(req.params.supplierId)
@@ -50,8 +60,12 @@ function supplierExists(req, res, next) {
     })
     .catch(next);
 }
+*/
 
-function create(req, res, next) {
+async function create(req, res, next) {
+  const data = await suppliersService.create(req.body.data);
+  res.status(201).json({ data });
+  /* Code using then() and catch()
   suppliersService
     // The req.body.data argument references the obj containing the supplier information
     .create(req.body.data)
@@ -59,6 +73,7 @@ function create(req, res, next) {
     // If the promise resolves successfully, the server responds with a 201 status code and the newly created supplier
     .then((data) => res.status(201).json({ data }))
     .catch(next);
+  */
 }
 
 function update(req, res, next) {
@@ -68,17 +83,27 @@ function update(req, res, next) {
     from accidentally, or intentionally, changing the supplier_id during an update */
     supplier_id: res.locals.supplier.supplier_id,
   };
+  const data = await suppliersService.update(updatedSupplier);
+  res.json({ data });
+
+  /* Code using then() and catch()
   suppliersService
     .update(updatedSupplier)
     .then((data) => res.json({ data }))
     .catch(next);
+  */
 }
 
 function destroy(req, res, next) {
+  const { supplier } = res.locals;
+  await suppliersService.delete(supplier.supplier_id);
+  res.sendStatus(204);
+  /* Code using then() and catch()
   suppliersService
     .delete(res.locals.supplier.supplier_id)
     .then(() => res.sendStatus(204))
     .catch(next);
+  */
 }
 
 module.exports = {
