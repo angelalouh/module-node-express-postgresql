@@ -74,12 +74,15 @@ function update(req, res, next) {
     .catch(next);
 }
 
-async function destroy(req, res, next) {
-  res.sendStatus(204);
+function destroy(req, res, next) {
+  suppliersService
+    .delete(res.locals.supplier.supplier_id)
+    .then(() => res.sendStatus(204))
+    .catch(next);
 }
 
 module.exports = {
   create: [hasOnlyValidProperties, hasRequiredProperties, create],
   update: [supplierExists, hasOnlyValidProperties, hasRequiredProperties, update],
-  delete: destroy,
+  delete: [supplierExists, destroy],
 };
