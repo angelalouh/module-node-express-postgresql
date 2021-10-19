@@ -76,7 +76,7 @@ async function create(req, res, next) {
   */
 }
 
-function update(req, res, next) {
+async function update(req, res, next) {
   const updatedSupplier = {
     ...req.body.data,
     /* supplier_id is set to existing supplier_id via res.locals.supplier to prevent the update 
@@ -94,7 +94,7 @@ function update(req, res, next) {
   */
 }
 
-function destroy(req, res, next) {
+async function destroy(req, res, next) {
   const { supplier } = res.locals;
   await suppliersService.delete(supplier.supplier_id);
   res.sendStatus(204);
