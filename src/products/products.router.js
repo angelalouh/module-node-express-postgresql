@@ -8,9 +8,9 @@ router.route("/price-summary").get(controller.listPriceSummary).all(methodNotAll
 
 router.route("/out-of-stock-count").get(controller.listOutOfStockCount).all(methodNotAllowed);
 
-router.route("/").get(controller.list).all(methodNotAllowed);
-
 // regex expression, "([0-9]+)",  ensures the route param, :movieId, consists of just one or more digits
 router.route("/:productId([0-9]+)").get(controller.read).all(methodNotAllowed);
+
+router.route("/").get(controller.list).all(methodNotAllowed);
 
 module.exports = router;
