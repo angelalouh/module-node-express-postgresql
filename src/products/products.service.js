@@ -23,6 +23,7 @@ function listPriceSummary() {
     .min("product_price")
     .max("product_price")
     .avg("product_price")
+    // groupBy tells each of the functions above to do the min, max, avg for each supplier_id and not all of the values in that column
     .groupBy("supplier_id");
 }
 
