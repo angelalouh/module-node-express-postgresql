@@ -1,6 +1,8 @@
 // Requiring the service object created in categories.service.js
 const categoriesService = require("./categories.service");
 
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
+
 async function list(req, res, next) {
   // categoriesService.list() executes a Knex query, which is an async operation
   // Using await forces the execution of the code to pause on that line until that async operation is finished
@@ -19,5 +21,6 @@ async function list(req, res, next) {
 }
 
 module.exports = {
-  list,
+  // Making use of the asyncErrorBoundary by wrapping the async fxn, list(), in it
+  list: asyncErrorBoundary(list),
 };
