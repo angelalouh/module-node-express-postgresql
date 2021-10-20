@@ -1,5 +1,19 @@
 const knex = require("../db/connection");
 
+function listTotalWeightByProduct() {
+  return knex("products")
+    // This query selects 3 columns
+    .select(
+      "product_sku",
+      "product_title",
+      // This is the 3rd column, which is the sum of multiplying the values from 2 columns.
+      knex.raw(
+        "sum(product_weight_in_lbs * product_quantity_in_stock) as total_weight_in_lbs"
+      )
+    )
+    .groupBy("product_title", "product_sku");
+}
+
 function listPriceSummary() {
   return knex("products")
     .select("supplier_id")
@@ -33,4 +47,5 @@ module.exports = {
   read,
   listOutOfStockCount,
   listPriceSummary,
+  listTotalWeightByProduct,
 };
